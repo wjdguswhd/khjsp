@@ -57,7 +57,7 @@
 		}
 
 		window.onload = () => {
-			const inputIdPw = document.getElemnetsByTagName('input');
+			const inputIdPw = document.getElementsByTagName('input');
 			for(const elm of inputIdPw){
 				elm.addEventListener('keyup',(e)=>{
 					if(e.key=='Enter'){

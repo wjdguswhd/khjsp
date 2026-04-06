@@ -1,6 +1,5 @@
 package employee.controller;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,16 +8,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Servlet implementation class LoginViewServlet
+ * Servlet implementation class AdminViewServlet
  */
-@WebServlet("/loginView.me")
-public class LoginViewServlet extends HttpServlet {
+@WebServlet("/admin.me")
+public class AdminViewServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginViewServlet() {
+    public AdminViewServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -27,9 +26,7 @@ public class LoginViewServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher view = request.getRequestDispatcher("WEB-INF/views/employee/login.jsp");
-		view.forward(request, response);
-		//response.sendRedirect("WEB-INF/views/employee/login.jsp");
+		request.getRequestDispatcher("WEB-INF/views/employee/admin.jsp").forward(request,response);
 	}
 
 	/**

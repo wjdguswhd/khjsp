@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class LoginServlet
@@ -39,8 +40,34 @@ public class LoginServlet extends HttpServlet {
 		e.setPwd(pwd);
 		
 		EmployeeService eService = new EmployeeService();
-		Employee login = eService.login(e); 
+		Employee login = eService.login(e); 		System.out.println(login);
 		
+		if(login != null) {
+			//로그인 성공
+			HttpSession session = request.getSession();
+			session.setAttribute("loginUser",login);
+			session.setMaxInactiveInterval(600);
+		//	request.getRequestDispatcher("index.jsp").forward(request,response);
+		//	response.sendRedirect("index.jsp");
+		//  		forward    vs    sendRedirect
+		//        요청 url 유지		 요청 url 유지x -> 인자 값으로 url 변경
+	    //request,response객체 유지  request,response객체 새로 생성
+		//=> 데이터 그대로 담겨져있음		=>데이터 모두 사라짐	
+			
+		response.sendRedirect(request.getContextPath());	
+			
+			
+			
+			
+			
+			
+			
+		}else {
+			//로그인 실패
+			request.setAttribute("msg", "로그인을 실패하였습니다.");
+			request.getRequestDispatcher("/WEB-INF/views/common/errorPage.jsp").forward(request, response);
+
+		}
 	}
 
 	/**
