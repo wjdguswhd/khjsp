@@ -1,11 +1,16 @@
 package employee.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import employee.model.service.EmployeeService;
+import employee.model.vo.Employee;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class AdminViewServlet
@@ -26,7 +31,22 @@ public class AdminViewServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Employee loginUser = (Employee)session.getAttribute("loginUser");
+		System.out.println(loginUser);
+		if(loginUser!=null && loginUser.getIsAdmin().equals("Y")) {
+			
+		ArrayList<Employee> list = new EmployeeService().selectAll();
+		request.setAttribute("list", list);
+		
 		request.getRequestDispatcher("WEB-INF/views/employee/admin.jsp").forward(request,response);
+		
+		
+		}else {
+			request.setAttribute("msg", "잘못된 접근입니다");
+			request.getRequestDispatcher("WEB-INF/views/common/errorPage.jsp").forward(request,response);
+			//메시지에 "잘못된 접근입니다"를 담고서 errorPage.jsp로 위임
+		}
 	}
 
 	/**

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +17,7 @@
 	}
 	.adminMenu:hover{font-weight: bold; cursor: pointer;}
 	
-	.menuContent{margin-left: 10px; width: 85%; height: 100%; display:none;}
+	.menuContent{margin-left: 10px; width: 85%; height: 100%;  display:none;}
 	
 	#enrollDiv{margin: auto; padding: 130px;}
 	#enrollDiv td{text-align: right;}
@@ -49,8 +51,146 @@
 			<div class="adminMenu">사원 등록 하기</div>
 		</div>
 		
-		<div class="menuContent" style="background: pink;"></div>
-		<div class="menuContent" style="background: yellowgreen;"></div>
-	</div>
+		<div class="menuContent" >
+			<table id="empList">
+				<tr>
+					<th width="6%">사번</th>
+					<th width="10%">이름</th>
+					<th width="10%">직업</th>
+					<th width="10%">매니저</th>
+					<th width="10%">입사일</th>
+					<th width="10%">급여</th>
+					<th width="10%">커미션</th>
+					<th width="10%">부서</th>
+					<th width="12%">관리자</th>
+					<th width="12%">활동여부</th>
+				</tr>
+				
+			  <c:if test="${empty list }">
+				  	<tr>
+				  		<td colspan="10">조회된 리스트가 없습니다.</td>
+				  	</tr>
+			  </c:if>
+			  
+			  <c:if test="${!empty list }">
+			  	<c:forEach items="${list}" var="e">
+					<tr>
+						<td>${e.empNo}</td>  
+						<td>${e.empName}</td>
+						<td>${e.job}</td>
+						<td>${empty e.mgr ? '-' : e.mgr }</td>
+						<td>${e.hireDate}</td>
+						<td>${e.sal}</td>
+						<td>${e.comm}</td>
+						<td>${e.dept}</td>
+						<td>${e.isAdmin}</td>
+						<td>${e.status}</td>
+					</tr>
+			  	</c:forEach>
+			  </c:if>
+			
+			</table>
+		</div>
+		
+		
+		<div class="menuContent" >
+		  <form action="${ contextPath }/insertEmp.me" method="post" id="enrollForm" name="enrollFrm">
+			<div align="center" id="enrollDiv">
+				<table>
+					<tr>
+						<td><label for="id">사원번호</label></td>
+						<td><input type="text" name="id" id="id" class="enrollInput" required autofocus></td>
+					</tr>
+					<tr>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td><label for="name">이름</label></td>
+						<td><input type="text" name="name" id="name" class="enrollInput" size="25" required></td>
+					</tr>
+					<tr>
+						<td><label for="job">직업</label></td>
+						<td><input type="text" name="job" id="job" class="enrollInput" size="25" required></td>
+					</tr>
+					<tr>
+						<td><label for="mgr">매니저</label></td>
+						<td>
+							<select name="mgr" class="enrollInput select">
+								<option>---------------------------------------</option>
+								<c:forEach items = "${list }" var = "e">
+									<c:if test="${e.status == 'Y' }">
+										<option value="${e.empNo}">${e.empName }</option>
+									</c:if>
+								</c:forEach>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="sal">급여</label></td>
+						<td><input type="number" name="sal" class="enrollInput" id="sal" size="25" value="0"></td>
+					</tr>
+					<tr>
+						<td><label for="comm">커미션</label></td>
+						<td><input type="number" name="comm" class="enrollInput" id="comm" size="25" value="0"></td>
+					</tr>
+					<tr>
+						<td><label for="dept">부서</label></td>
+						<td>
+							<select name="dept" class="enrollInput select">
+								<option>---------------------------------------</option>
+								<option value="10">ACCOUNTING</option>
+								<option value="20">RESEARCH</option>
+								<option value="30">SALES</option>
+								<option value="40">OPERATIONS</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="isAdmin">관리자 여부</label></td>
+						<td>
+							<input type="checkbox" name='isAdmin' id="isAdmin" value="Y">
+						</td>
+					</tr>
+				</table>
+				<br>
+				<button id="enrollButton">사원등록</button>
+			</div>
+		</form>
+	  </div>
+ </div>
+	
+	<script>
+		window.onload=()=>{
+			//사원 전체보기를 클릭하면 분홍색 div만 나오게, 사원 등록하기를 클릭하면 연두색 div만 나오게
+			const adminMenus = document.getElementsByClassName('adminMenu');
+			const menuContents = document.getElementsByClassName('menuContent');
+			
+			adminMenus[0].addEventListener('click',()=>{
+				menuContents[0].style.display = 'block';
+				menuContents[1].style.display = 'none';
+			});
+			
+			adminMenus[1].addEventListener('click',()=>{
+				menuContents[1].style.display = 'block';
+				menuContents[0].style.display = 'none';
+			});
+			
+			document.getElementById("enrollButton").onclick=(e)=>{
+				const dept = document.getElementsByName('dept')[0];
+				if(dept.value.indexOf('-')==0){
+					alert('부서는 필수 선택 항목입니다.');
+					e.preventDefault();
+					dept.focus();
+				}
+			}
+			const afterEnroll =  '${param.afterEnroll}';
+			if(afterEnroll=='Y'){
+				menuContents[0].style.display = 'block';
+				menuContents[1].style.display = 'none';
+			}
+			
+		}
+	
+	</script>
 </body>
 </html>
