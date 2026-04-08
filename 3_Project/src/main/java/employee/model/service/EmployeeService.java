@@ -55,4 +55,15 @@ public class EmployeeService {
 		return result;
 	}
 
+	public int updateState(int id, String col, String value) {	
+		Connection conn = getConnection();
+		int result = empDAO.updateState(conn,id,col,value);
+		if(result>0) {
+			commit(conn);
+		}else {
+			rollback(conn);
+		}
+		return result;
+	}
+
 }

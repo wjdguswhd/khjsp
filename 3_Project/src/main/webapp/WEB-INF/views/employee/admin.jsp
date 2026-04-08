@@ -269,10 +269,31 @@
 	                      url: '${contextPath}/updateState.me',
 	                      data:{empNo:empNo, column:clickItem, value:this.innerText},
 	                      type:'post',
-	                      success: date=>{
-	                    	  console.log(date);
+	                      success: data=>{
+	                    	  /* console.log(data); */
+	                    	  if(data=='success'){
+	                    		  this.className='selectState';
+	                    		  for(const siblings of myTd.children){
+	                    			  if(siblings != this){
+	                    				  siblings.className = 'unselectState';
+	                    			  }
+	                    		  }
+	                    		  if(empNo == ${loginUser.empNo} && this.innerText == 'N'){
+	                    			  if(clickItem=='관리자'){
+	                    				  ${loginUser.setIsAdmin('N')}
+	                    				  alert('권한이 없습니다. 메인 페이지로 이동합니다.');
+	                    				  location.href='${contextPath}';
+	                    			  }else{
+	                    				  alert('탈퇴한 회원입니다. 자동 로그아웃 됩니다.')
+	                    				  location.href='${contextPath}/logout.me'
+	                    			  }
+	                    		  }
+	                    		  
+	                    	  }else{
+	                    		  alert('상태 변경을 실패하였습니다.');
+	                    	  }
 	                      },
-	                      error: date=> console.log(date)
+	                      error: data=> console.log(data)
 	                   });
 	                }
 	             });

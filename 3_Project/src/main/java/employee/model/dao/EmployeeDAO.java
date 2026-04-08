@@ -162,4 +162,23 @@ public class EmployeeDAO {
 		return result;
 	}
 
+	public int updateState(Connection conn, int id, String col, String value) {
+		
+		PreparedStatement pstmt = null;
+		int result = 0;
+		String query = "UPDATE emp SET "+col+"=? where empno =?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, value);
+			pstmt.setInt(2, id);
+		  
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(pstmt);
+		}
+		return result;
+	}
+
 }
