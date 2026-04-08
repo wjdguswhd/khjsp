@@ -49,4 +49,10 @@ public class EmployeeService {
 		return result;
 	}
 
+	public int checkEmpNo(int id) {
+		Connection conn= getConnection();
+		int result = empDAO.checkEmpNo(conn,id);
+		return result;
+	}
+
 }

@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-4.0.0.js"></script>
 <style>
 	h1>a{color:black; text-decoration:none;}
 	h1>a:active{color:orangered;}

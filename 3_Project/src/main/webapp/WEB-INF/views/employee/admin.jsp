@@ -30,6 +30,13 @@
 	#adminDiv+div>table{width: 100%; text-align: center;}
 	th{border-bottom: 1px solid black;}
 	#adminDiv+div>table td{height: 35px;}
+	
+	#adminDiv+div>table td>div{
+		border:1px solid black; height:80%; width:45%; display: inline-block;
+		padding-top: 3%; cursor:pointer;
+	}
+	.selectState{background:lightgray;}
+	.unselectState{background:none;}
 </style>
 </head>
 <body>
@@ -83,8 +90,16 @@
 						<td>${e.sal}</td>
 						<td>${e.comm}</td>
 						<td>${e.dept}</td>
-						<td>${e.isAdmin}</td>
-						<td>${e.status}</td>
+						<%-- <td>${e.isAdmin}</td> --%>
+						<td>
+							<div class="${e.isAdmin =='Y'?'selectState' : 'unselectState' }">Y</div>
+							<div class="${e.isAdmin =='N'?'selectState' : 'unselectState' }">N</div>
+						</td>
+						<%-- <td>${e.status}</td> --%>
+						<td>
+							<div class="${e.status =='Y'?'selectState' : 'unselectState' }">Y</div>
+							<div class="${e.status =='N'?'selectState' : 'unselectState' }">N</div>
+						</td>
 					</tr>
 			  	</c:forEach>
 			  </c:if>
@@ -165,6 +180,8 @@
 			const adminMenus = document.getElementsByClassName('adminMenu');
 			const menuContents = document.getElementsByClassName('menuContent');
 			
+			let validate = false;
+			
 			adminMenus[0].addEventListener('click',()=>{
 				menuContents[0].style.display = 'block';
 				menuContents[1].style.display = 'none';
@@ -182,6 +199,13 @@
 					e.preventDefault();
 					dept.focus();
 				}
+				
+				if(!validate){
+					alert('사원번호를 확인하세요');
+					document.getElementById('id').focus();
+					e.preventDefault();
+				}
+				
 			}
 			const afterEnroll =  '${param.afterEnroll}';
 			if(afterEnroll=='Y'){
@@ -189,6 +213,70 @@
 				menuContents[1].style.display = 'none';
 			}
 			
+			
+			document.getElementById('id').addEventListener('focusout',function(){
+				const value = this.value.trim();
+				const targetTd = this.parentElement.parentElement.nextElementSibling.children[0];
+				if(value == ''){
+					targetTd.innerText = '';
+					validate = false;
+				}else{
+					$.ajax({
+						url : '${contextPath}/checkEmpNo.me',
+						data : {value:value},
+						success: (data)=>{
+							console.log("응답:", data);
+							if(data==0){
+								targetTd.innerText = '사용 가능한 사원번호입니다.';
+								targetTd.style.color = 'green';
+								validate = true;
+							}else{
+								targetTd.innerText = '중복된 사원번호입니다.';
+								targetTd.style.color = 'red';
+								validate = false;
+							}
+							targetTd.style.fontSize = '12px';
+						},
+						error:(res)=>{
+							console.log(res);
+						}
+					});
+				}
+			});
+			
+			const table = document.getElementById('empList');
+			const stateButtons = table.querySelectorAll('div');
+			/* console.log(stateButtons); */
+	         for(const button of stateButtons){
+	             button.addEventListener('click', function(){
+	                if(this.className == 'unselectState'){
+	                   const myTd = this.parentElement;
+	                   const myTr = myTd.parentElement;
+	                   const myTrChildren = myTr.children;
+	                   const empNo = myTrChildren[0].innerText;
+	                   
+	                   let clickColumnIndex;
+	                   for(const index in myTrChildren){
+	                      if(myTd == myTrChildren[index]){
+	                         clickColumnIndex = index;
+	                      }
+	                   }
+	                   
+	                   const ths = table.querySelectorAll('th');
+	                   const clickItem = ths[clickColumnIndex].innerText;
+	                   
+	                   $.ajax({
+	                      url: '${contextPath}/updateState.me',
+	                      data:{empNo:empNo, column:clickItem, value:this.innerText},
+	                      type:'post',
+	                      success: date=>{
+	                    	  console.log(date);
+	                      },
+	                      error: date=> console.log(date)
+	                   });
+	                }
+	             });
+	          }
 		}
 	
 	</script>
